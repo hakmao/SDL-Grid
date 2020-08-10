@@ -21,17 +21,17 @@ class Renderer {
     const std::size_t grid_cell_size_;
     const std::size_t grid_width_ ;
     const std::size_t grid_height_;
-    std::size_t init_window_dimension(const std::size_t cell_size, const std::size_t dimension);
-    void init_SDL();
-    void init_window();
-    void init_cursor();
-    void render();
+    void InitSDL();
+    void InitWindow();
+    void InitCursor();
+    void Render();
+    std::size_t InitWindowDimension(const std::size_t cell_size, const std::size_t dimension);
 public:
     SDL_bool sdl_quit;
     Renderer(const std::size_t grid_cell_size,
              const std::size_t grid_width, const std::size_t grid_height);
     ~Renderer();
-    void input_loop();
+    void InputLoop();
 };
 
 #endif //SDLGRID_RENDERER_H

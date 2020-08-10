@@ -4,7 +4,7 @@
 #include "renderer.h"
 
 
-std::size_t Renderer::init_window_dimension(const std::size_t cell_size, const std::size_t dimension) {
+std::size_t Renderer::InitWindowDimension(const std::size_t cell_size, const std::size_t dimension) {
     // +1 to window width & height so that the border grid lines fit in the screen.
     return (dimension * cell_size) + 1;
 }
@@ -25,7 +25,7 @@ Renderer::~Renderer()
     SDL_Quit();
 }
 
-void Renderer::init_cursor() {
+void Renderer::InitCursor() {
     // Place the cursor in the middle of the grid
     grid_cursor_->x = (grid_width_ - 1) / 2 * grid_cell_size_;
     grid_cursor_->y = (grid_height_ - 1) / 2 * grid_cell_size_;
@@ -33,7 +33,7 @@ void Renderer::init_cursor() {
     grid_cursor_->h = grid_cell_size_;
 }
 
-void Renderer::init_SDL()
+void Renderer::InitSDL()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -42,7 +42,7 @@ void Renderer::init_SDL()
         exit(EXIT_FAILURE);
     }
 }
-void Renderer::init_window()
+void Renderer::InitWindow()
 {
     if (SDL_CreateWindowAndRenderer(window_width_, window_height_, 0, &sdl_window_,
                                     &sdl_renderer_) < 0)
@@ -54,7 +54,7 @@ void Renderer::init_window()
     SDL_SetWindowTitle(sdl_window_, "SDL Grid");
 }
 
-void Renderer::render()
+void Renderer::Render()
 {
 // Draw grid background.
     SDL_SetRenderDrawColor(sdl_renderer_, grid_background.r, grid_background.g,
@@ -86,7 +86,7 @@ void Renderer::render()
     SDL_RenderPresent(sdl_renderer_);
 }
 
-void Renderer::input_loop() {
+void Renderer::InputLoop() {
     // Input loop
     while (!sdl_quit) {
         SDL_Event event;
@@ -117,6 +117,6 @@ void Renderer::input_loop() {
                     break;
             }
         }
-        render();
+        Render();
     }
 }

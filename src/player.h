@@ -7,21 +7,30 @@
 
 #include "SDL.h"
 
-enum class Direction { Up, Down, Left, Right };
+enum class Direction {
+    Up, Down, Left, Right
+};
 
 class Player {
-    bool alive;
+    bool is_alive{true};
     int grid_width_;
     int grid_height_;
-    void UpdatePosition();
+    void SetInitialPosition();
 
 public:
     int pos_x;
     int pos_y;
-    Player(int grid_width, int grid_height): grid_width_{grid_width}, grid_height_{grid_height} {}
+
+    Player(int grid_width, int grid_height)
+            : grid_width_{grid_width},
+              grid_height_{grid_height} { SetInitialPosition(); }
+
     bool IsPlayerCell(int x, int y) const;
+
     bool IsAlive() const;
-    void Move();
+
+    void TryToMove(Direction d);
+
     void Update();
 };
 

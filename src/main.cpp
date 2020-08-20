@@ -1,4 +1,8 @@
-#include "main.h"
+//#include "main.h"
+#include <iostream>
+//#include "SDL.h"
+#include "player.h"
+#include "renderer.h"
 
 constexpr std::size_t kgrid_cell_size = 36;
 constexpr std::size_t kgrid_width = 29;

@@ -6,10 +6,6 @@
 #define SDLGRID_MAIN_H
 
 // #include <SDL2/SDL.h>
-#include <iostream>
-#include "SDL.h"
-//#include "player.h"
-#include "renderer.h"
 
 
 #endif //SDLGRID_MAIN_H

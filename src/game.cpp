@@ -7,15 +7,21 @@
 Game::Game(std::size_t grid_width, std::size_t grid_height)
 : player(grid_width, grid_height){}
 
-void Game::Run(const Controller& controller, const Renderer& renderer)
+void Game::Run(const Controller& controller, Renderer& renderer)
 {
-    ;
+    bool is_running = true;
+
+    while (is_running)
+    {
+        renderer.Render(player);
+        controller.HandleInput(is_running, player);
+    }
 }
 
 void Game::Update()
 {
 /*
-    if (!player.alive) return;
+    if (!player.IsAlive()) return;
 
     player.Update();
 */
@@ -24,5 +30,5 @@ void Game::Update()
 
 int Game::GetScore()
 {
-    return 0;
+    return 1000;
 }

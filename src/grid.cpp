@@ -13,6 +13,20 @@ Grid::Grid(std::size_t rows, std::size_t cols)
     global_state.resize(rows, vector<State>(cols, State::Empty));
 }
 
+Grid::Grid(Grid2D grid)
+{
+    global_state = grid;
+    num_rows = global_state.size();
+    num_cols = global_state[0].size();
+}
+
+Grid::Grid(string file_path)
+{
+    FromFile(file_path);
+    num_rows = global_state.size();
+    num_cols = global_state[0].size();
+}
+
 int Grid::Size() const
 {
     return num_rows * num_cols;
@@ -107,4 +121,53 @@ string Grid::ToString() const {
 std::ostream& operator<<(std::ostream& out, const Grid& grid)
 {
     return (out << grid.ToString());
+}
+
+bool Grid::FromFile(string file_path) {
+    if (!global_state.empty())
+        global_state.clear();
+    global_state = ReadFile(file_path);
+    if (global_state.empty())
+        return false;
+    else
+        return true;
+}
+
+bool Grid::ToFile(string file_path) {
+    if (global_state.empty())
+    {
+        std::cerr << "Grid is empty: nothing to write." << std::endl;
+        return false;
+    }
+    else
+    {
+        std::ofstream outfile(file_path);
+        if (outfile)
+        {
+            for (auto& row: global_state)
+            {
+                for (auto it = row.begin(); it != row.end(); ++it)
+                {
+                    outfile << static_cast<int>(*it) << ",";
+                }
+                outfile << std::endl;
+            }
+            return true;
+        }
+        else
+        {
+            std::cerr << "Could not open file for reading." << std::endl;
+            return false;
+        }
+    }
+}
+
+// Equality
+bool operator==(const Grid& g1, const Grid& g2)
+{
+    return (g1.global_state == g2.global_state);
+}
+bool operator!=(const Grid& g1, const Grid& g2)
+{
+    return (g1.global_state != g2.global_state);
 }

@@ -31,6 +31,8 @@ public:
     std::size_t num_rows;
     std::size_t num_cols;
     Grid(std::size_t rows, std::size_t cols);
+    Grid(Grid2D);
+    Grid(string file_path);
     int Size() const;
     bool CellIsOnGrid(std::size_t x, std::size_t y) const;
     bool CellsAreNeighbours(std::size_t  x1, std::size_t y1, std::size_t x2, std::size_t y2);
@@ -39,7 +41,12 @@ public:
     const Grid2D &GlobalState() const;
     // Convert to string representation
     string ToString() const;
+    bool FromFile(string file_path);
+    bool ToFile(string file_path);
     friend std::ostream& operator<<(std::ostream& out, const Grid& grid);
+    // Equality
+    friend bool operator==(const Grid& g1, const Grid & g2);
+    friend bool operator!=(const Grid& g1, const Grid & g2);
 };
 
 

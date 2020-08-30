@@ -13,10 +13,11 @@ constexpr std::size_t kgrid_height = 23;
 
 int main()
 {
-    Renderer renderer(kgrid_cell_size, kgrid_width, kgrid_height);
+    Grid game_grid(kgrid_width, kgrid_height);
+    Renderer renderer(game_grid.width, game_grid.height, kgrid_cell_size);
     Controller controller;
-    Game game( kgrid_width, kgrid_height);
-    game.Run(controller, renderer);
+    Game game;
+    game.Run(game_grid, controller, renderer);
     // Goodbye message
     std::cout << "Game Over!\n";
     std::cout << "Score: " << game.GetScore() << std::endl;

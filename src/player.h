@@ -7,31 +7,14 @@
 
 #include "SDL.h"
 
-enum class Direction {
-    Up, Down, Left, Right
-};
-
 class Player {
-    bool is_alive{true};
-    int grid_width_;
-    int grid_height_;
-    void SetInitialPosition();
 
 public:
-    int pos_x;
-    int pos_y;
+    std::size_t pos_x{0};
+    std::size_t pos_y{0};
+    bool is_alive{true};
 
-    Player(int grid_width, int grid_height)
-            : grid_width_{grid_width},
-              grid_height_{grid_height} { SetInitialPosition(); }
-
-    bool IsPlayerCell(int x, int y) const;
-
-    bool IsAlive() const;
-
-    void TryToMove(Direction d);
-
-    void Update();
+//    Player(std::size_t x, std::size_t y) : pos_x{x}, pos_y{y} {}
 };
 
 #endif //SDLGRID_PLAYER_H

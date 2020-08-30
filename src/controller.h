@@ -5,11 +5,11 @@
 #ifndef SDLGRID_CONTROLLER_H
 #define SDLGRID_CONTROLLER_H
 
-#include "player.h"
+#include "grid.h"
 
 class Controller {
 public:
-    void HandleInput(bool &running, Player &player) const;
+    void HandleInput(Grid &grid, bool &running) const;
 };
 
 #endif //SDLGRID_CONTROLLER_H

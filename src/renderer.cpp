@@ -9,8 +9,8 @@ std::size_t Renderer::InitWindowDimension(const std::size_t cell_size, const std
     return (dimension * cell_size) + 1;
 }
 
-Renderer::Renderer(const std::size_t grid_cell_size, const std::size_t grid_width, const std::size_t grid_height) :
-        grid_cell_size_{grid_cell_size}, grid_width_{grid_width}, grid_height_{grid_height} {
+Renderer::Renderer(const std::size_t grid_width, const std::size_t grid_height, const std::size_t grid_cell_size)
+: grid_width_{grid_width}, grid_height_{grid_height}, grid_cell_size_{grid_cell_size} {
     window_width_ = InitWindowDimension(grid_cell_size, grid_width);
     window_height_ = InitWindowDimension(grid_cell_size, grid_height);
     InitSDL();
@@ -41,12 +41,10 @@ void Renderer::InitWindow() {
     SDL_SetWindowTitle(sdl_window_, "SDL Grid");
 }
 
-void Renderer::Render(const Player &player) {
-    SDL_Rect player_block;
-    player_block.w = grid_cell_size_;
-    player_block.h = grid_cell_size_;
-    player_block.x = player.pos_x * grid_cell_size_;
-    player_block.y = player.pos_y * grid_cell_size_;
+void Renderer::Render(const Grid &grid)
+{
+    SDL_Rect block;
+    //
 
     // Clear screen and draw grid background.
     SDL_SetRenderDrawColor(sdl_renderer_, grid_background.r, grid_background.g,
@@ -66,45 +64,51 @@ void Renderer::Render(const Player &player) {
          y += grid_cell_size_) {
         SDL_RenderDrawLine(sdl_renderer_, 0, y, window_width_, y);
     }
-
-    // Draw player block
-    SDL_SetRenderDrawColor(sdl_renderer_, grid_cursor_color.r,
-                           grid_cursor_color.g, grid_cursor_color.b,
-                           grid_cursor_color.a);
-    SDL_RenderFillRect(sdl_renderer_, &player_block);
-
-    SDL_RenderPresent(sdl_renderer_);
-}
-
-void Renderer::HandleInput(bool &running, Player &player) {
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
-            running = false;
-        } else if (event.type == SDL_KEYDOWN) {
-            switch (event.key.keysym.sym) {
-                case SDLK_w:
-                case SDLK_UP:
-                    player.TryToMove(Direction::Up);
-//                            player_cursor_->y -= grid_cell_size_;
+    SDL_SetRenderDrawColor(sdl_renderer_, grid_obstacle_color.r, grid_obstacle_color.g,
+                           grid_obstacle_color.b, grid_obstacle_color.a);
+    // Render grid cells
+    for (std::size_t x = 0; x < grid_width_; ++x)
+    {
+        for (std::size_t y = 0; y < grid_height_; ++y)
+        {
+            State cell_state = grid.GetState(x,y);
+            switch (cell_state)
+            {
+                case State::Obstacle:
+                    RenderObstacle(block, x, y);
                     break;
-                case SDLK_s:
-                case SDLK_DOWN:
-                    player.TryToMove(Direction::Down);
-//                            player_cursor_->y += grid_cell_size_;
+                case State::Player:
+                    RenderPlayer(block, x, y);
                     break;
-                case SDLK_a:
-                case SDLK_LEFT:
-                    player.TryToMove(Direction::Left);
-//                            player_cursor_->x -= grid_cell_size_;
-                    break;
-                case SDLK_d:
-                case SDLK_RIGHT:
-                    player.TryToMove(Direction::Right);
-//                            player_cursor_->x += grid_cell_size_;
+                case State::Treasure:
+                case State::Empty:
+                default:
                     break;
             }
         }
     }
+    SDL_RenderPresent(sdl_renderer_);
 }
 
+void Renderer::RenderObstacle(SDL_Rect& block, std::size_t x, std::size_t  y)
+{
+    SDL_SetRenderDrawColor(sdl_renderer_, grid_obstacle_color.r, grid_obstacle_color.g,
+                           grid_obstacle_color.b, grid_obstacle_color.a);
+    block.w = grid_cell_size_;
+    block.h = grid_cell_size_;
+    block.x = x * grid_cell_size_;
+    block.y = y * grid_cell_size_;
+    SDL_RenderFillRect(sdl_renderer_, &block);
+}
+
+void Renderer::RenderPlayer(SDL_Rect& block, std::size_t x, std::size_t  y)
+{
+    SDL_SetRenderDrawColor(sdl_renderer_, grid_cursor_color.r,
+                           grid_cursor_color.g, grid_cursor_color.b,
+                           grid_cursor_color.a);
+    block.w = grid_cell_size_;
+    block.h = grid_cell_size_;
+    block.x = x * grid_cell_size_;
+    block.y = y * grid_cell_size_;
+    SDL_RenderFillRect(sdl_renderer_, &block);
+}

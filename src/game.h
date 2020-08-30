@@ -5,16 +5,16 @@
 #ifndef SDLGRID_GAME_H
 #define SDLGRID_GAME_H
 
-#include "player.h"
+#include "grid.h"
 #include "renderer.h"
 #include "controller.h"
 
 class Game {
-    Player player;
     void Update();
+    int score{0};
 public:
-    Game( const std::size_t grid_width, const std::size_t grid_height);
-    void Run(const Controller &controller, Renderer &renderer);
+//    Game( );
+    void Run(Grid& g, const Controller &controller, Renderer &renderer);
     int GetScore();
 };
 

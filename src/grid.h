@@ -6,6 +6,7 @@
 #define SDLGRID_GRID_H
 
 #include <vector>
+#include "player.h"
 
 using std::vector;
 using std::string;
@@ -18,28 +19,39 @@ enum class State
     Treasure
 };
 
+enum class Direction {
+    Up, Down, Left, Right
+};
+
 using GridRow = vector<State>;
-using Grid2D = vector < GridRow>;
+using Grid2D = vector <GridRow>;
 
 class Grid
 {
+    std::size_t num_rows;
+    std::size_t num_cols;
     Grid2D global_state;
     GridRow ParseLine(string line);
     Grid2D ReadFile(string file_path);
+    void SetPlayerStartPosition();
 
 public:
-    std::size_t num_rows;
-    std::size_t num_cols;
-    Grid(std::size_t rows, std::size_t cols);
+    std::size_t height;
+    std::size_t width;
+    Player player;
+    Grid(std::size_t width, std::size_t height);
     Grid(Grid2D);
     Grid(string file_path);
     int Size() const;
-    bool CellIsOnGrid(std::size_t x, std::size_t y) const;
-    bool CellsAreNeighbours(std::size_t  x1, std::size_t y1, std::size_t x2, std::size_t y2);
-    State CellState(std::size_t  x, std::size_t y) const;
-    bool CanMove(std::size_t x, std::size_t y) const;
+    bool ContainsCell(std::size_t x, std::size_t y) const;
+    bool Neighbours(std::size_t  x1, std::size_t y1, std::size_t x2, std::size_t y2);
+    State GetState(std::size_t  x, std::size_t y) const;
+    void SetState(State new_state, std::size_t  x, std::size_t y);
+    void TryToMovePlayer(Direction d);
+    bool CanMoveTo(std::size_t x, std::size_t y) const;
+    void Move(std::size_t old_x, std::size_t old_y, std::size_t new_x, std::size_t new_y);
     const Grid2D &GlobalState() const;
-    // Convert to string representation
+    // Import & export grid representation from/to file
     string ToString() const;
     bool FromFile(string file_path);
     bool ToFile(string file_path);

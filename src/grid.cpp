@@ -7,10 +7,11 @@
 #include <fstream>
 
 
-Grid::Grid(std::size_t rows, std::size_t cols)
-: num_rows {rows}, num_cols {cols}
+Grid::Grid(std::size_t width, std::size_t height)
+: width{width}, height{height}, num_rows {height}, num_cols {width}
 {
-    global_state.resize(rows, vector<State>(cols, State::Empty));
+    global_state.resize(num_rows, vector<State>(num_cols, State::Empty));
+    SetPlayerStartPosition();
 }
 
 Grid::Grid(Grid2D grid)
@@ -18,6 +19,9 @@ Grid::Grid(Grid2D grid)
     global_state = grid;
     num_rows = global_state.size();
     num_cols = global_state[0].size();
+    height = num_rows;
+    width = num_cols;
+    SetPlayerStartPosition();
 }
 
 Grid::Grid(string file_path)
@@ -25,28 +29,31 @@ Grid::Grid(string file_path)
     FromFile(file_path);
     num_rows = global_state.size();
     num_cols = global_state[0].size();
+    height = num_rows;
+    width = num_cols;
+    SetPlayerStartPosition();
 }
 
 int Grid::Size() const
 {
-    return num_rows * num_cols;
+    return width * height;
 }
 
-bool Grid::CellIsOnGrid(std::size_t x, std::size_t y) const
+bool Grid::ContainsCell(std::size_t x, std::size_t y) const
 {
-    return ( x < num_rows) && ( y < num_cols);
+    return ( x < width) && ( y < height);
 }
 
-bool Grid::CellsAreNeighbours(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2) {
+bool Grid::Neighbours(std::size_t x1, std::size_t y1, std::size_t x2, std::size_t y2) {
     std::size_t diff1 = (x1 > x2) ? x1 - x2 : x2 - x1;
     std::size_t diff2 = (y1 > y2) ? y1 - y2 : y2 - y1;
     return (diff1 <= 1 ) && (diff2 <= 1 );
 }
 
-bool Grid::CanMove(std::size_t x, std::size_t y) const {
-    if (!CellIsOnGrid(x,y))
+bool Grid::CanMoveTo(std::size_t x, std::size_t y) const {
+    if (!ContainsCell(x, y))
         return false;
-    State cell_state = global_state[x][y];
+    State cell_state = global_state[y][x];
     switch (cell_state)
     {
         case State::Obstacle:
@@ -59,9 +66,51 @@ bool Grid::CanMove(std::size_t x, std::size_t y) const {
     }
 }
 
-State Grid::CellState(std::size_t x, std::size_t y) const
+void Grid::SetPlayerStartPosition() {
+    player.pos_x = (width + 1) / 2;
+    player.pos_y = (height + 1) / 2;
+    SetState(State::Player, player.pos_x,player.pos_y);
+}
+
+void Grid::TryToMovePlayer(Direction d) {
+    int new_x = player.pos_x;
+    int new_y = player.pos_y;
+    switch (d) {
+        case Direction::Up:
+            new_y -= 1;
+            break;
+        case Direction::Down:
+            new_y  += 1;
+            break;
+        case Direction::Left:
+            new_x -= 1;
+            break;
+        case Direction::Right:
+            new_x  += 1;
+            break;
+    }
+    if (CanMoveTo(new_x, new_y))
+    {
+        Move(player.pos_x, player.pos_y, new_x, new_y);
+        player.pos_x = new_x;
+        player.pos_y = new_y;
+    }
+}
+
+void Grid::Move(std::size_t old_x, std::size_t old_y, std::size_t new_x, std::size_t new_y) {
+    State state = GetState(old_x, old_y);
+    SetState(state, new_x, new_y);
+    SetState(State::Empty, old_x, old_y);
+}
+
+State Grid::GetState(std::size_t x, std::size_t y) const
 {
-    return global_state[x][y];
+    return global_state[y][x];
+}
+
+void Grid::SetState(State new_state, std::size_t x, std::size_t y)
+{
+    global_state[y][x] = new_state;
 }
 
 const Grid2D& Grid::GlobalState() const
@@ -171,3 +220,4 @@ bool operator!=(const Grid& g1, const Grid& g2)
 {
     return (g1.global_state != g2.global_state);
 }
+

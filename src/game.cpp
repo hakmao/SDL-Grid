@@ -4,17 +4,14 @@
 
 #include "game.h"
 
-Game::Game(std::size_t grid_width, std::size_t grid_height)
-: player(grid_width, grid_height){}
-
-void Game::Run(const Controller& controller, Renderer& renderer)
+void Game::Run(Grid& g, const Controller& controller, Renderer& renderer)
 {
     bool is_running = true;
 
     while (is_running)
     {
-        renderer.Render(player);
-        controller.HandleInput(is_running, player);
+        renderer.Render( g);
+        controller.HandleInput(g, is_running);
     }
 }
 
@@ -30,5 +27,5 @@ void Game::Update()
 
 int Game::GetScore()
 {
-    return 1000;
+    return score;
 }

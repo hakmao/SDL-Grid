@@ -6,6 +6,7 @@
 #define SDLGRID_GRID_H
 
 #include <vector>
+#include <tuple>
 #include "player.h"
 
 using std::vector;
@@ -33,7 +34,7 @@ class Grid
     Grid2D global_state;
     GridRow ParseLine(string line);
     Grid2D ReadFile(string file_path);
-    void SetPlayerStartPosition();
+    void PlayerDefaultPosition();
 
 public:
     std::size_t height;
@@ -47,6 +48,9 @@ public:
     bool Neighbours(std::size_t  x1, std::size_t y1, std::size_t x2, std::size_t y2);
     State GetState(std::size_t  x, std::size_t y) const;
     void SetState(State new_state, std::size_t  x, std::size_t y);
+    std::tuple<std::size_t, std::size_t> GetPlayerPosition() const;
+    std::tuple<std::size_t, std::size_t> FindPlayerPosition() const;
+    void SetPlayerPosition(std::size_t x, std::size_t y);
     void TryToMovePlayer(Direction d);
     bool CanMoveTo(std::size_t x, std::size_t y) const;
     void Move(std::size_t old_x, std::size_t old_y, std::size_t new_x, std::size_t new_y);

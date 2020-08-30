@@ -11,7 +11,7 @@ Grid::Grid(std::size_t width, std::size_t height)
 : width{width}, height{height}, num_rows {height}, num_cols {width}
 {
     global_state.resize(num_rows, vector<State>(num_cols, State::Empty));
-    SetPlayerStartPosition();
+    PlayerDefaultPosition();
 }
 
 Grid::Grid(Grid2D grid)
@@ -21,7 +21,6 @@ Grid::Grid(Grid2D grid)
     num_cols = global_state[0].size();
     height = num_rows;
     width = num_cols;
-    SetPlayerStartPosition();
 }
 
 Grid::Grid(string file_path)
@@ -31,7 +30,6 @@ Grid::Grid(string file_path)
     num_cols = global_state[0].size();
     height = num_rows;
     width = num_cols;
-    SetPlayerStartPosition();
 }
 
 int Grid::Size() const
@@ -66,10 +64,22 @@ bool Grid::CanMoveTo(std::size_t x, std::size_t y) const {
     }
 }
 
-void Grid::SetPlayerStartPosition() {
-    player.pos_x = (width + 1) / 2;
-    player.pos_y = (height + 1) / 2;
-    SetState(State::Player, player.pos_x,player.pos_y);
+std::tuple<std::size_t, std::size_t> Grid::GetPlayerPosition() const
+{
+    return std::make_tuple(player.pos_x, player.pos_y);
+}
+
+void Grid::SetPlayerPosition(std::size_t x, std::size_t y) {
+    player.pos_x = x;
+    player.pos_y = y;
+    SetState(State::Player, x, y);
+}
+
+std::tuple<std::size_t, std::size_t> Grid::FindPlayerPosition() const
+{ }
+
+void Grid::PlayerDefaultPosition() {
+    SetPlayerPosition( ((width + 1)/2), ((height + 1)/2));
 }
 
 void Grid::TryToMovePlayer(Direction d) {

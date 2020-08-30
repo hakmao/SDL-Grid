@@ -10,6 +10,7 @@
 #include "controller.h"
 
 class Game {
+
     void Update();
     int score{0};
 public:

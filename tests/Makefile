@@ -19,10 +19,10 @@ MKDIR_P ?= mkdir -p
 
 
 ### Tests ###
-all: grid_tests
+all: grid_tests.out
 
 # Grid tests
-grid_tests: $(BUILD_DIR)/grid_tests.o $(BUILD_DIR)/grid.o
+grid_tests.out: $(BUILD_DIR)/grid_tests.o $(BUILD_DIR)/grid.o
 	$(LINKER) $(CXX_FLAGS) $(LD_FLAGS) $^ -o $@
 
 ### Object files ###

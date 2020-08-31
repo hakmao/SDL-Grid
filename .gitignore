@@ -33,10 +33,6 @@ log/*
 cmake-build-debug/
 build/
 bin/
-*.grid
-*_tests
-*_demo
-Zombie
 
 # C/C++
 *.o

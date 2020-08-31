@@ -14,7 +14,7 @@ class Renderer {
     SDL_Color grid_background {22, 22, 22, 255}; // Barely Black
     SDL_Color grid_line_color {44, 44, 44, 255}; // Dark grey
     SDL_Color grid_obstacle_color {88, 88, 88, 255}; // Light grey
-    SDL_Color grid_cursor_color {255, 255, 255, 255}; // White
+    SDL_Color grid_cursor_color {0, 0, 255, 255}; // Blue
 
     std::size_t window_width_;
     std::size_t window_height_;

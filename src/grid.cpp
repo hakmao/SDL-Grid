@@ -11,26 +11,28 @@ Grid::Grid(std::size_t width, std::size_t height)
 : width{width}, height{height}, num_rows {height}, num_cols {width}
 {
     global_state.resize(num_rows, vector<State>(num_cols, State::Empty));
-    PlayerDefaultPosition();
+    SetDefaultPlayerPosition();
 }
+
+Grid::Grid(): Grid( grid_default_width, grid_default_height){}
 
 Grid::Grid(Grid2D grid)
 {
     global_state = grid;
+    if (global_state.empty())
+        std::cout << "WARNING [Grid Constructor]: Global state is empty." << std::endl;
     num_rows = global_state.size();
     num_cols = global_state[0].size();
     height = num_rows;
     width = num_cols;
+    auto [found, x, y ] = FindPlayerPosition();
+    if (found)
+        SetPlayerPosition(x,y);
+    else
+        std::cerr << "WARNING [Grid Constructor]: Player position not set." << std::endl;
 }
 
-Grid::Grid(string file_path)
-{
-    FromFile(file_path);
-    num_rows = global_state.size();
-    num_cols = global_state[0].size();
-    height = num_rows;
-    width = num_cols;
-}
+Grid::Grid(string file_path): Grid(ReadFile(file_path)) {}
 
 int Grid::Size() const
 {
@@ -75,11 +77,24 @@ void Grid::SetPlayerPosition(std::size_t x, std::size_t y) {
     SetState(State::Player, x, y);
 }
 
-std::tuple<std::size_t, std::size_t> Grid::FindPlayerPosition() const
-{ }
+std::tuple< bool, std::size_t, std::size_t> Grid::FindPlayerPosition() const
+{
+    for (std::size_t row = 0; row < num_rows; ++row)
+    {
+        for (std::size_t col = 0; col < num_cols; ++col)
+        {
+            if (global_state[row][col] == State::Player) {
+                std::cout << "Player found at [" << col << ", " << row << "]\n";
+                return std::make_tuple(true, col, row);
+            }
+        }
+    }
+    std::cout << "Player not found" << std::endl;
+    return std::make_tuple(false, 0, 0);
+}
 
-void Grid::PlayerDefaultPosition() {
-    SetPlayerPosition( ((width + 1)/2), ((height + 1)/2));
+void Grid::SetDefaultPlayerPosition() {
+    SetPlayerPosition( ((width + 1)/2 - 1), ((height + 1)/2 - 1));
 }
 
 void Grid::TryToMovePlayer(Direction d) {
@@ -161,7 +176,7 @@ Grid2D Grid::ReadFile(string path) {
 string Grid::ToString() const {
     if (global_state.empty())
     {
-        std::cerr << "Grid is empty: nothing to write." << std::endl;
+        std::cerr << "WARNING [Grid::ToString]: Grid is empty, nothing to write." << std::endl;
         return "";
     }
     else
@@ -186,16 +201,18 @@ bool Grid::FromFile(string file_path) {
     if (!global_state.empty())
         global_state.clear();
     global_state = ReadFile(file_path);
-    if (global_state.empty())
+    if (global_state.empty()){
+        std::cerr << "Warning [Grid::FromFile]: Grid is empty." << std::endl;
         return false;
+    }
     else
         return true;
 }
 
 bool Grid::ToFile(string file_path) {
-    if (global_state.empty())
+    if ( global_state.empty())
     {
-        std::cerr << "Grid is empty: nothing to write." << std::endl;
+        std::cerr << "WARNING [Grid::ToFile]: Grid is empty, nothing to write." << std::endl;
         return false;
     }
     else
@@ -215,7 +232,7 @@ bool Grid::ToFile(string file_path) {
         }
         else
         {
-            std::cerr << "Could not open file for reading." << std::endl;
+            std::cerr << "WARNING [Grid::ToFile]: Could not open file for reading." << std::endl;
             return false;
         }
     }

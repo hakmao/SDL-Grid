@@ -9,6 +9,9 @@
 #include <tuple>
 #include "player.h"
 
+constexpr std::size_t grid_default_width = 29;
+constexpr std::size_t grid_default_height = 23;
+
 using std::vector;
 using std::string;
 
@@ -34,12 +37,13 @@ class Grid
     Grid2D global_state;
     GridRow ParseLine(string line);
     Grid2D ReadFile(string file_path);
-    void PlayerDefaultPosition();
+    void SetDefaultPlayerPosition();
 
 public:
     std::size_t height;
     std::size_t width;
     Player player;
+    Grid();
     Grid(std::size_t width, std::size_t height);
     Grid(Grid2D);
     Grid(string file_path);
@@ -49,7 +53,7 @@ public:
     State GetState(std::size_t  x, std::size_t y) const;
     void SetState(State new_state, std::size_t  x, std::size_t y);
     std::tuple<std::size_t, std::size_t> GetPlayerPosition() const;
-    std::tuple<std::size_t, std::size_t> FindPlayerPosition() const;
+    std::tuple< bool, std::size_t, std::size_t> FindPlayerPosition() const;
     void SetPlayerPosition(std::size_t x, std::size_t y);
     void TryToMovePlayer(Direction d);
     bool CanMoveTo(std::size_t x, std::size_t y) const;

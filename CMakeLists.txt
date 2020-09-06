@@ -12,6 +12,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS} src)
 
-add_executable(SDLGrid src/main.cpp src/renderer.cpp src/player.h src/controller.cpp src/game.cpp src/grid.cpp)
+add_executable(SDLGrid src/main.cpp src/renderer.cpp src/entity.h src/controller.cpp src/game.cpp src/grid.cpp src/random_point.cpp src/random_point.h)
 string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
 target_link_libraries(SDLGrid   ${SDL2_LIBRARIES})

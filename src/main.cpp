@@ -1,7 +1,7 @@
 //#include "main.h"
 #include <iostream>
 //#include "SDL.h"
-#include "player.h"
+#include "entity.h"
 #include "renderer.h"
 #include "controller.h"
 #include "game.h"

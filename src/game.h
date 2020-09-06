@@ -5,6 +5,7 @@
 #ifndef SDLGRID_GAME_H
 #define SDLGRID_GAME_H
 
+#include <random>
 #include "grid.h"
 #include "renderer.h"
 #include "controller.h"

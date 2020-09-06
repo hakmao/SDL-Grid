@@ -11,7 +11,8 @@ Grid::Grid(std::size_t width, std::size_t height)
 : width{width}, height{height}, num_rows {height}, num_cols {width}
 {
     global_state.resize(num_rows, vector<State>(num_cols, State::Empty));
-    SetDefaultPlayerPosition();
+    random_point = static_cast<std::unique_ptr<RandomPoint>>(new RandomPoint(width, height));
+    PlacePlayer();
 }
 
 Grid::Grid(): Grid( grid_default_width, grid_default_height){}
@@ -25,11 +26,8 @@ Grid::Grid(Grid2D grid)
     num_cols = global_state[0].size();
     height = num_rows;
     width = num_cols;
-    auto [found, x, y ] = FindPlayerPosition();
-    if (found)
-        SetPlayerPosition(x,y);
-    else
-        std::cerr << "WARNING [Grid Constructor]: Player position not set." << std::endl;
+    random_point = static_cast<std::unique_ptr<RandomPoint>>(new RandomPoint(width, height));
+    PlacePlayer();
 }
 
 Grid::Grid(string file_path): Grid(ReadFile(file_path)) {}
@@ -76,6 +74,44 @@ void Grid::SetPlayerPosition(std::size_t x, std::size_t y) {
     player.pos_y = y;
     SetState(State::Player, x, y);
 }
+void Grid::PlacePlayer() {
+    while (true)
+    {
+        auto [x, y] = random_point->Generate();
+        if (IsEmpty(x, y))
+        {
+            SetPlayerPosition(x,y);
+            return;
+        }
+    }
+}
+
+void Grid::PlaceEntity(Entity& entity) {
+    // Place entity on grid
+//    int x, y;
+    while(true)
+    {
+        auto [x, y] = random_point->Generate();
+        // Check that the grid cell is empty before placing player.
+        if (IsEmpty(x, y))
+        {
+            entity.pos_x = x;
+            entity.pos_y = y;
+            switch (entity.type) {
+                case Type::Player:
+                    SetState(State::Player, x, y);
+                    break;
+                case Type::Treasure:
+                    SetState(State::Treasure, x, y);
+                    break;
+                case Type::Entity:
+                default:
+                    break;
+            }
+            return;
+        }
+    }
+}
 
 std::tuple< bool, std::size_t, std::size_t> Grid::FindPlayerPosition() const
 {
@@ -93,9 +129,6 @@ std::tuple< bool, std::size_t, std::size_t> Grid::FindPlayerPosition() const
     return std::make_tuple(false, 0, 0);
 }
 
-void Grid::SetDefaultPlayerPosition() {
-    SetPlayerPosition( ((width + 1)/2 - 1), ((height + 1)/2 - 1));
-}
 
 void Grid::TryToMovePlayer(Direction d) {
     int new_x = player.pos_x;
@@ -131,6 +164,11 @@ void Grid::Move(std::size_t old_x, std::size_t old_y, std::size_t new_x, std::si
 State Grid::GetState(std::size_t x, std::size_t y) const
 {
     return global_state[y][x];
+}
+
+bool Grid::IsEmpty(std::size_t x, std::size_t y) const {
+    State cell_state = GetState(x, y);
+    return (cell_state == State::Empty);
 }
 
 void Grid::SetState(State new_state, std::size_t x, std::size_t y)

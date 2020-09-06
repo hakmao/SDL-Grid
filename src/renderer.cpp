@@ -71,7 +71,7 @@ void Renderer::Render(const Grid &grid)
     {
         for (std::size_t y = 0; y < grid_height_; ++y)
         {
-            State cell_state = grid.GetState(x,y);
+            State cell_state = grid.GetCellState(x,y);
             switch (cell_state)
             {
                 case State::Obstacle:

@@ -5,22 +5,22 @@
 #ifndef SDLGRID_ENTITY_H
 #define SDLGRID_ENTITY_H
 
-enum class Type { Entity, Player, Treasure };
+enum class Type { Player, Treasure };
 
 class Entity {
 public:
     std::size_t pos_x{0};
     std::size_t pos_y{0};
-    Type type{Type::Entity};
+    Type type;
 };
 
-class Player : public Entity {
+class Player : virtual public Entity {
 public:
     bool is_alive{true};
     Type type{Type::Player};
 };
 
-class Treasure: public Entity {
+class Treasure: virtual public Entity {
 public:
     Type type{Type::Treasure};
 };

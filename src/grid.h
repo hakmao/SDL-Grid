@@ -40,6 +40,9 @@ class Grid
     GridRow ParseLine(string line);
     Grid2D ReadFile(string file_path);
     void PlacePlayer();
+    void PlaceEntity(Entity& e);
+    State EntityToState(Entity& e);
+    void SetEntityPosition(Entity& e, std::size_t x, std::size_t y);
 
 public:
     std::size_t height;
@@ -52,14 +55,13 @@ public:
     Grid(string file_path);
     int Size() const;
     bool ContainsCell(std::size_t x, std::size_t y) const;
-    bool Neighbours(std::size_t  x1, std::size_t y1, std::size_t x2, std::size_t y2);
-    State GetState(std::size_t  x, std::size_t y) const;
-    bool IsEmpty(std::size_t x, std::size_t y) const;
-    void SetState(State new_state, std::size_t  x, std::size_t y);
+    bool AreNeighbours(std::size_t  x1, std::size_t y1, std::size_t x2, std::size_t y2);
+    bool CellIsEmpty(std::size_t x, std::size_t y) const;
+    State GetCellState(std::size_t  x, std::size_t y) const;
+    void SetCellState(State new_state, std::size_t  x, std::size_t y);
     std::tuple<std::size_t, std::size_t> GetPlayerPosition() const;
     std::tuple< bool, std::size_t, std::size_t> FindPlayerPosition() const;
     void SetPlayerPosition(std::size_t x, std::size_t y);
-    void PlaceEntity(Entity& entity);
     void TryToMovePlayer(Direction d);
     bool CanMoveTo(std::size_t x, std::size_t y) const;
     void Move(std::size_t old_x, std::size_t old_y, std::size_t new_x, std::size_t new_y);

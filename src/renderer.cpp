@@ -1,6 +1,7 @@
 //
 // Created by Johannes Flieger on 11/05/2020.
 //
+#include <iostream>
 #include "renderer.h"
 
 
@@ -44,6 +45,8 @@ void Renderer::InitWindow() {
 void Renderer::Render(const Grid &grid)
 {
     SDL_Rect block;
+    SDL_Rect player_block;
+    SDL_Rect treasure_block;
     //
 
     // Clear screen and draw grid background.
@@ -64,8 +67,9 @@ void Renderer::Render(const Grid &grid)
          y += grid_cell_size_) {
         SDL_RenderDrawLine(sdl_renderer_, 0, y, window_width_, y);
     }
-    SDL_SetRenderDrawColor(sdl_renderer_, grid_obstacle_color.r, grid_obstacle_color.g,
-                           grid_obstacle_color.b, grid_obstacle_color.a);
+    //
+//    SDL_SetRenderDrawColor(sdl_renderer_, grid_obstacle_color.r, grid_obstacle_color.g,
+//                           grid_obstacle_color.b, grid_obstacle_color.a);
     // Render grid cells
     for (std::size_t x = 0; x < grid_width_; ++x)
     {
@@ -77,10 +81,13 @@ void Renderer::Render(const Grid &grid)
                 case State::Obstacle:
                     RenderObstacle(block, x, y);
                     break;
+                case State::Treasure:
+                    std::cout << "Rendering treasure " << "\n";
+                    RenderTreasure( treasure_block, x, y);
+                    break;
                 case State::Player:
                     RenderPlayer(block, x, y);
                     break;
-                case State::Treasure:
                 case State::Empty:
                 default:
                     break;
@@ -88,6 +95,7 @@ void Renderer::Render(const Grid &grid)
         }
     }
     SDL_RenderPresent(sdl_renderer_);
+    SDL_Delay(50);
 }
 
 void Renderer::RenderObstacle(SDL_Rect& block, std::size_t x, std::size_t  y)
@@ -106,6 +114,16 @@ void Renderer::RenderPlayer(SDL_Rect& block, std::size_t x, std::size_t  y)
     SDL_SetRenderDrawColor(sdl_renderer_, grid_cursor_color.r,
                            grid_cursor_color.g, grid_cursor_color.b,
                            grid_cursor_color.a);
+    block.w = grid_cell_size_;
+    block.h = grid_cell_size_;
+    block.x = x * grid_cell_size_;
+    block.y = y * grid_cell_size_;
+    SDL_RenderFillRect(sdl_renderer_, &block);
+}
+void Renderer::RenderTreasure(SDL_Rect &block, std::size_t x, std::size_t y) {
+    SDL_SetRenderDrawColor(sdl_renderer_, grid_treasure_color.r,
+                           grid_treasure_color.g, grid_treasure_color.b,
+                           grid_treasure_color.a);
     block.w = grid_cell_size_;
     block.h = grid_cell_size_;
     block.x = x * grid_cell_size_;

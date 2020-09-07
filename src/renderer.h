@@ -15,6 +15,7 @@ class Renderer {
     SDL_Color grid_line_color {44, 44, 44, 255}; // Dark grey
     SDL_Color grid_obstacle_color {88, 88, 88, 255}; // Light grey
     SDL_Color grid_cursor_color {0, 0, 255, 255}; // Blue
+    SDL_Color grid_treasure_color {255, 215, 0, 255}; // Gold
 
     std::size_t window_width_;
     std::size_t window_height_;
@@ -31,6 +32,7 @@ public:
     ~Renderer();
     void Render(const Grid& grid);
     void RenderObstacle(SDL_Rect& block, std::size_t x, std::size_t y);
+    void RenderTreasure(SDL_Rect& block, std::size_t x, std::size_t y);
     void RenderPlayer(SDL_Rect& block, std::size_t x, std::size_t y);
 };
 

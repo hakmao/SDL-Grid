@@ -39,10 +39,14 @@ class Grid
     std::unique_ptr<RandomPoint> random_point;
     GridRow ParseLine(string line);
     Grid2D ReadFile(string file_path);
-    void PlacePlayer();
     void PlaceEntity(Entity& e);
-    State EntityToState(Entity& e);
+    void PlacePlayer();
+    void PlaceTreasure();
+    void PlaceEntities();
+    State EntityToState(const Entity& e) const;
     void SetEntityPosition(Entity& e, std::size_t x, std::size_t y);
+    void SetTreasurePosition(std::size_t x, std::size_t y);
+    void SetPlayerPosition(std::size_t x, std::size_t y);
 
 public:
     std::size_t height;
@@ -61,7 +65,6 @@ public:
     void SetCellState(State new_state, std::size_t  x, std::size_t y);
     std::tuple<std::size_t, std::size_t> GetPlayerPosition() const;
     std::tuple< bool, std::size_t, std::size_t> FindPlayerPosition() const;
-    void SetPlayerPosition(std::size_t x, std::size_t y);
     void TryToMovePlayer(Direction d);
     bool CanMoveTo(std::size_t x, std::size_t y) const;
     void Move(std::size_t old_x, std::size_t old_y, std::size_t new_x, std::size_t new_y);

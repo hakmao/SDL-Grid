@@ -12,8 +12,9 @@ Grid::Grid(std::size_t width, std::size_t height)
 {
     global_state.resize(num_rows, vector<State>(num_cols, State::Empty));
     random_point = std::make_unique<RandomPoint>(width, height);
-    PlaceTreasure();
-    PlacePlayer();
+//    PlaceTreasure();
+//    PlacePlayer();
+    PlaceEntities();
 }
 
 Grid::Grid() : Grid(grid_default_width, grid_default_height) {}
@@ -27,8 +28,9 @@ Grid::Grid(Grid2D grid) {
     height = num_rows;
     width = num_cols;
     random_point = std::make_unique<RandomPoint>(width, height);
-    PlaceTreasure();
-    PlacePlayer();
+//    PlaceTreasure();
+//    PlacePlayer();
+    PlaceEntities();
 }
 
 Grid::Grid(string file_path) : Grid(ReadFile(file_path)) {}
@@ -83,7 +85,7 @@ void Grid::SetTreasurePosition(std::size_t x, std::size_t y) {
 }
 
 //void Grid::SetEntityPosition(Entity& e, std::size_t x, std::size_t y) {
-////    SetCellState(State::Empty, e.pos_x, e.pos_y);
+// //    SetCellState(State::Empty, e.pos_x, e.pos_y);
 //    std::cout << "Setting position of entity to [" << x  << "," << y << "]\n";
 //    e.pos_x = x;
 //    e.pos_y = y;

@@ -10,7 +10,7 @@
 Grid::Grid(std::size_t width, std::size_t height)
         : width{width}, height{height}, num_rows{height}, num_cols{width}
 {
-    global_state.resize(num_rows, vector<State>(num_cols, State::Empty));
+    global_state.resize(num_rows, vector<Type>(num_cols, Type::Empty));
     random_point = std::make_unique<RandomPoint>(width, height);
 //    PlaceTreasure();
 //    PlacePlayer();
@@ -52,13 +52,13 @@ bool Grid::AreNeighbours(std::size_t x1, std::size_t y1, std::size_t x2, std::si
 bool Grid::CanMoveTo(std::size_t x, std::size_t y) const {
     if (!ContainsCell(x, y))
         return false;
-    State cell_state = global_state[y][x];
+    Type cell_state = global_state[y][x];
     switch (cell_state) {
-        case State::Obstacle:
-        case State::Treasure:
+        case Type::Obstacle:
             return false;
-        case State::Empty:
-        case State::Player:
+        case Type::Empty:
+        case Type::Player:
+        case Type::Treasure:
         default:
             return true;
     }
@@ -69,56 +69,18 @@ std::tuple<std::size_t, std::size_t> Grid::GetPlayerPosition() const {
 }
 
 void Grid::SetPlayerPosition(std::size_t x, std::size_t y) {
-//    SetEntityPosition(player, x, y);
     std::cout << "Setting position of player to [" << x  << "," << y << "]\n";
     player.pos_x = x;
     player.pos_y = y;
-    SetCellState(State::Player, x, y);
+    SetCellState(Type::Player, x, y);
 }
 
 void Grid::SetTreasurePosition(std::size_t x, std::size_t y) {
-//    SetEntityPosition(player, x, y);
     std::cout << "Setting position of treasure to [" << x  << "," << y << "]\n";
     treasure.pos_x = x;
     treasure.pos_y = y;
-    SetCellState(State::Treasure, x, y);
+    SetCellState(Type::Treasure, x, y);
 }
-
-//void Grid::SetEntityPosition(Entity& e, std::size_t x, std::size_t y) {
-// //    SetCellState(State::Empty, e.pos_x, e.pos_y);
-//    std::cout << "Setting position of entity to [" << x  << "," << y << "]\n";
-//    e.pos_x = x;
-//    e.pos_y = y;
-//    SetCellState(EntityToState(e), x, y);
-//}
-
-//State Grid::EntityToState(const Entity& entity) const {
-//    EntityType entity_type = entity.GetType();
-//    if (EntityType::Player == entity_type)
-//    {
-//        std::cout << "Entity type: Player" << std::endl;
-//        return State::Player;
-//    }
-//    else if (EntityType::Treasure == entity_type)
-//    {
-//        std::cout << "Entity type: Treasure" << std::endl;
-//        return State::Treasure;
-//    }
-//    else
-//    {
-//        std::cout << "Entity type: Entity not recognised." << std::endl;
-//        return State::Empty;
-//    }
-//}
-//void Grid::PlaceEntity(Entity& e) {
-//    while (true) {
-//        auto[x, y] = random_point->Generate();
-//        if (CellIsEmpty(x, y)) {
-//            SetEntityPosition(e, x, y);
-//            return;
-//        }
-//    }
-//}
 
 void Grid::PlacePlayer() {
     while (true) {
@@ -129,6 +91,7 @@ void Grid::PlacePlayer() {
         }
     }
 }
+
 void Grid::PlaceTreasure() {
     while (true) {
         auto[x, y] = random_point->Generate();
@@ -144,34 +107,10 @@ void Grid::PlaceEntities(){
     PlacePlayer();
 }
 
-/*
-void Grid::PlaceEntity(Entity &entity) {
-    // Place entity on grid
-//    int x, y;
-    while (true) {
-        auto[x, y] = random_point->Generate();
-        // Check that the grid cell is empty before placing player.
-        if (CellIsEmpty(x, y)) {
-            entity.pos_x = x;
-            entity.pos_y = y;
-            switch (entity.type) {
-                case Type::Player:
-                    SetCellState(State::Player, x, y);
-                    break;
-                case Type::Treasure:
-                    SetCellState(State::Treasure, x, y);
-                    break;
-            }
-            return;
-        }
-    }
-}
-*/
-
 std::tuple<bool, std::size_t, std::size_t> Grid::FindPlayerPosition() const {
     for (std::size_t row = 0; row < num_rows; ++row) {
         for (std::size_t col = 0; col < num_cols; ++col) {
-            if (global_state[row][col] == State::Player) {
+            if (global_state[row][col] == Type::Player) {
                 std::cout << "Player found at [" << col << ", " << row << "]\n";
                 return std::make_tuple(true, col, row);
             }
@@ -203,24 +142,38 @@ void Grid::TryToMovePlayer(Direction d) {
         Move(player.pos_x, player.pos_y, new_x, new_y);
         player.pos_x = new_x;
         player.pos_y = new_y;
+        Update();
+    }
+}
+
+void Grid::Update()
+{
+    if (!player.is_alive) return;
+
+    // Check if player has found treasure
+    std::size_t new_x = player.pos_x;
+    std::size_t new_y = player.pos_y;
+    if (treasure.pos_x == new_x && treasure.pos_y == new_y)
+    {
+        PlaceTreasure();
     }
 }
 
 void Grid::Move(std::size_t old_x, std::size_t old_y, std::size_t new_x, std::size_t new_y) {
-    State state = GetCellState(old_x, old_y);
+    Type state = GetCellState(old_x, old_y);
     SetCellState(state, new_x, new_y);
-    SetCellState(State::Empty, old_x, old_y);
+    SetCellState(Type::Empty, old_x, old_y);
 }
 
-State Grid::GetCellState(std::size_t x, std::size_t y) const {
+Type Grid::GetCellState(std::size_t x, std::size_t y) const {
     return global_state[y][x];
 }
-void Grid::SetCellState(State new_state, std::size_t x, std::size_t y) {
+void Grid::SetCellState(Type new_state, std::size_t x, std::size_t y) {
     global_state[y][x] = new_state;
 }
 bool Grid::CellIsEmpty(std::size_t x, std::size_t y) const {
-    State cell_state = GetCellState(x, y);
-    return (cell_state == State::Empty);
+    Type cell_state = GetCellState(x, y);
+    return (cell_state == Type::Empty);
 }
 
 const Grid2D &Grid::GlobalState() const {
@@ -233,7 +186,7 @@ GridRow Grid::ParseLine(string line) {
     char c;
     GridRow row;
     while (str_line >> n >> c && c == ',') {
-        row.push_back(static_cast<State>(n));
+        row.push_back(static_cast<Type>(n));
     }
     return row;
 }

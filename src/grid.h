@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <tuple>
-#include "entity.h"
+#include "game_objects.h"
 #include "random_point.h"
 
 constexpr std::size_t grid_default_width = 29;
@@ -16,19 +16,21 @@ constexpr std::size_t grid_default_height = 23;
 using std::vector;
 using std::string;
 
-enum class State
+/*
+enum class Type
 {
     Empty,
     Obstacle,
     Player,
     Treasure
 };
+*/
 
 enum class Direction {
     Up, Down, Left, Right
 };
 
-using GridRow = vector<State>;
+using GridRow = vector<Type>;
 using Grid2D = vector <GridRow>;
 
 class Grid
@@ -43,10 +45,11 @@ class Grid
     void PlacePlayer();
     void PlaceTreasure();
     void PlaceEntities();
-    State EntityToState(const Entity& e) const;
+    Type EntityToState(const Entity& e) const;
     void SetEntityPosition(Entity& e, std::size_t x, std::size_t y);
     void SetTreasurePosition(std::size_t x, std::size_t y);
     void SetPlayerPosition(std::size_t x, std::size_t y);
+    void Update();
 
 public:
     std::size_t height;
@@ -61,8 +64,8 @@ public:
     bool ContainsCell(std::size_t x, std::size_t y) const;
     bool AreNeighbours(std::size_t  x1, std::size_t y1, std::size_t x2, std::size_t y2);
     bool CellIsEmpty(std::size_t x, std::size_t y) const;
-    State GetCellState(std::size_t  x, std::size_t y) const;
-    void SetCellState(State new_state, std::size_t  x, std::size_t y);
+    Type GetCellState(std::size_t  x, std::size_t y) const;
+    void SetCellState(Type new_state, std::size_t  x, std::size_t y);
     std::tuple<std::size_t, std::size_t> GetPlayerPosition() const;
     std::tuple< bool, std::size_t, std::size_t> FindPlayerPosition() const;
     void TryToMovePlayer(Direction d);

@@ -82,11 +82,12 @@ void Renderer::Render(const Grid &grid)
                     RenderObstacle(block, x, y);
                     break;
                 case Type::Treasure:
-                    std::cout << "Rendering treasure " << "\n";
+                    std::cout << "Rendering treasure." << "\n";
                     RenderTreasure( treasure_block, x, y);
                     break;
                 case Type::Player:
-                    RenderPlayer(block, x, y);
+                    std::cout << "Rendering player." << "\n";
+                    RenderPlayer(player_block, x, y);
                     break;
                 case Type::Empty:
                 default:
@@ -129,4 +130,9 @@ void Renderer::RenderTreasure(SDL_Rect &block, std::size_t x, std::size_t y) {
     block.x = x * grid_cell_size_;
     block.y = y * grid_cell_size_;
     SDL_RenderFillRect(sdl_renderer_, &block);
+}
+
+void Renderer::UpdateWindowTitle(int score) {
+    std::string title{ "Player Score: " + std::to_string(score)};
+    SDL_SetWindowTitle(sdl_window_, title.c_str());
 }

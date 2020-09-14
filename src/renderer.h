@@ -34,6 +34,7 @@ public:
     void RenderObstacle(SDL_Rect& block, std::size_t x, std::size_t y);
     void RenderTreasure(SDL_Rect& block, std::size_t x, std::size_t y);
     void RenderPlayer(SDL_Rect& block, std::size_t x, std::size_t y);
+    void UpdateWindowTitle(int score);
 };
 
 #endif //SDLGRID_RENDERER_H

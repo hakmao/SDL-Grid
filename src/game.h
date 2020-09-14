@@ -11,12 +11,12 @@
 #include "controller.h"
 
 class Game {
-
     void Update();
     int score{0};
+    Uint32 target_frame_duration;
 public:
 //    Game( );
-    void Run(Grid& g, const Controller &controller, Renderer &renderer);
+    void Run(Grid& g, const Controller &controller, Renderer &renderer, const Uint32 target_frame_duration);
     int GetScore();
 };
 
